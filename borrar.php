@@ -13,12 +13,12 @@ try {
   $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
     
   $id = $_GET['id'];
-  $consultaSQL = "DELETE FROM alumnos WHERE id =" . $id;
+  $consultaSQL = "DELETE FROM alumnos WHERE id_alumno =" . $id;
 
   $sentencia = $conexion->prepare($consultaSQL);
   $sentencia->execute();
 
-  header('Location: /index.php');
+  header('Location: /manitosdecolores/index.php');
 
 } catch(PDOException $error) {
   $resultado['error'] = true;
