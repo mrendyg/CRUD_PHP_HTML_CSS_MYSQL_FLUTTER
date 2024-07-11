@@ -2,9 +2,10 @@
 
 include 'funciones.php';
 
-csrf();
+csrf(); // Función para generar y verificar el token CSRF
+
 if (isset($_POST['submit']) && !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
-  die();
+  die("Token CSRF no válido");
 }
 
 if (isset($_POST['submit'])) {
@@ -18,32 +19,38 @@ if (isset($_POST['submit'])) {
   try {
     $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
     $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
+    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Habilitar excepciones PDO
 
     $alumno = [
       "nombre"   => $_POST['nombre'],
-      "apellido" => $_POST['apellido'],
-      "email"    => $_POST['email'],
+      "apellido_paterno" => $_POST['apellido_paterno'],
+      "apellido_materno" => $_POST['apellido_materno'],
       "edad"     => $_POST['edad'],
+      "ci"       => $_POST['ci'],
+      "peso"     => $_POST['peso'],
+      "vacunas_al_dia" => $_POST['vacunas_al_dia'],
+      "id_padre" => $_POST['id_padre'],
+      "id_madre" => $_POST['id_madre'],
+      "id_apoderado" => $_POST['id_apoderado'],
+      "id_curso" => $_POST['id_curso'],
     ];
 
-    $consultaSQL = "INSERT INTO alumnos (nombre, apellido, email, edad)";
-    $consultaSQL .= "values (:" . implode(", :", array_keys($alumno)) . ")";
+    $consultaSQL = "INSERT INTO alumnos (nombre, apellido_paterno, apellido_materno, edad, CI, peso, vacunas_al_dia, id_padre, id_madre, id_apoderado, id_curso)";
+    $consultaSQL .= " VALUES (:" . implode(", :", array_keys($alumno)) . ")";
 
     $sentencia = $conexion->prepare($consultaSQL);
     $sentencia->execute($alumno);
 
   } catch(PDOException $error) {
     $resultado['error'] = true;
-    $resultado['mensaje'] = $error->getMessage();
+    $resultado['mensaje'] = 'Error al agregar alumno: ' . $error->getMessage();
   }
 }
 ?>
 
 <?php include 'templates/header.php'; ?>
 
-<?php
-if (isset($resultado)) {
-  ?>
+<?php if (isset($resultado)): ?>
   <div class="container mt-3">
     <div class="row">
       <div class="col-md-12">
@@ -53,9 +60,7 @@ if (isset($resultado)) {
       </div>
     </div>
   </div>
-  <?php
-}
-?>
+<?php endif; ?>
 
 <div class="container">
   <div class="row">
@@ -68,19 +73,47 @@ if (isset($resultado)) {
           <input type="text" name="nombre" id="nombre" class="form-control">
         </div>
         <div class="form-group">
-          <label for="apellido">Apellido</label>
-          <input type="text" name="apellido" id="apellido" class="form-control">
+          <label for="apellido_paterno">Apellido Paterno</label>
+          <input type="text" name="apellido_paterno" id="apellido_paterno" class="form-control">
         </div>
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" name="email" id="email" class="form-control">
+          <label for="apellido_materno">Apellido Materno</label>
+          <input type="text" name="apellido_materno" id="apellido_materno" class="form-control">
         </div>
         <div class="form-group">
           <label for="edad">Edad</label>
           <input type="text" name="edad" id="edad" class="form-control">
         </div>
         <div class="form-group">
-          <input name="csrf" type="hidden" value="<?php echo escapar($_SESSION['csrf']); ?>">
+          <label for="ci">CI</label>
+          <input type="text" name="ci" id="ci" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="peso">Peso</label>
+          <input type="text" name="peso" id="peso" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="vacunas_al_dia">Vacunas al día</label>
+          <input type="text" name="vacunas_al_dia" id="vacunas_al_dia" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="id_padre">ID del Padre</label>
+          <input type="text" name="id_padre" id="id_padre" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="id_madre">ID de la Madre</label>
+          <input type="text" name="id_madre" id="id_madre" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="id_apoderado">ID del Apoderado</label>
+          <input type="text" name="id_apoderado" id="id_apoderado" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="id_curso">ID del Curso</label>
+          <input type="text" name="id_curso" id="id_curso" class="form-control">
+        </div>
+        <input name="csrf" type="hidden" value="<?= escapar($_SESSION['csrf']) ?>">
+        <div class="form-group">
           <input type="submit" name="submit" class="btn btn-primary" value="Enviar">
           <a class="btn btn-primary" href="index.php">Regresar al inicio</a>
         </div>

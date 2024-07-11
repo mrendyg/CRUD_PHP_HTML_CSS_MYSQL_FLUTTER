@@ -22,13 +22,13 @@ try {
   $sentencia = $conexion->prepare($consultaSQL);
   $sentencia->execute();
 
-  $alumnos = $sentencia->fetchAll();
+  $alumno = $sentencia->fetchAll();
 
 } catch(PDOException $error) {
   $error= $error->getMessage();
 }
 
-$titulo = isset($_POST['apellido']) ? 'Lista de alumnos (' . $_POST['apellido'] . ')' : 'Lista de alumnos';
+$titulo = isset($_POST['apellido']) ? 'Lista de alumno (' . $_POST['apellido'] . ')' : 'Lista de alumno';
 ?>
 
 <?php include "templates/header.php"; ?>
@@ -74,26 +74,39 @@ if ($error) {
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
             <th>Edad</th>
-            <th>Acciones</th>
+            <th>CI</th>
+            <th>Peso</th>
+            <th>Vacunas al dia</th>
+            <th>Padre</th>
+            <th>Madre</th>
+            <th>Apoderado</th>
+            <th>Curso</th>
           </tr>
         </thead>
         <tbody>
           <?php
-          if ($alumnos && $sentencia->rowCount() > 0) {
-            foreach ($alumnos as $fila) {
+          if ($alumno && $sentencia->rowCount() > 0) {
+            foreach ($alumno as $fila) {
               ?>
               <tr>
-                <td><?php echo escapar($fila["id"]); ?></td>
+                <td><?php echo escapar($fila["id_alumno"]); ?></td>
                 <td><?php echo escapar($fila["nombre"]); ?></td>
-                <td><?php echo escapar($fila["apellido"]); ?></td>
-                <td><?php echo escapar($fila["email"]); ?></td>
+                <td><?php echo escapar($fila["apellido_paterno"]); ?></td>
+                <td><?php echo escapar($fila["apellido_materno"]); ?></td>
                 <td><?php echo escapar($fila["edad"]); ?></td>
+                <td><?php echo escapar($fila["CI"]); ?></td>
+                <td><?php echo escapar($fila["peso"]); ?></td>
+                <td><?php echo escapar($fila["vacunas_al_dia"]); ?></td>
+                <td><?php echo escapar($fila["id_padre"]); ?></td>
+                <td><?php echo escapar($fila["id_madre"]); ?></td>
+                <td><?php echo escapar($fila["id_apoderado"]); ?></td>
+                <td><?php echo escapar($fila["id_curso"]); ?></td>
                 <td>
-                  <a href="<?= 'borrar.php?id=' . escapar($fila["id"]) ?>">🗑️Borrar</a>
-                  <a href="<?= 'editar.php?id=' . escapar($fila["id"]) ?>">✏️Editar</a>
+                  <a href="<?= 'borrar.php?id=' . escapar($fila["id_alumno"]) ?>">🗑️Borrar</a>
+                  <a href="<?= 'editar.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
                 </td>
               </tr>
               <?php

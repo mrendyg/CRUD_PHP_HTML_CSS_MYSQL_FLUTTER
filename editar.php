@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
     $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
 
     $alumno = [
-      "id"        => $_GET['id'],
+      "id"        => $_GET['id_alumno'],
       "nombre"    => $_POST['nombre'],
       "apellido"  => $_POST['apellido'],
       "email"     => $_POST['email'],
