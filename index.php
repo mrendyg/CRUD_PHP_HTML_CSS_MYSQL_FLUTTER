@@ -13,8 +13,8 @@ try {
   $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
   $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
 
-  if (isset($_POST['apellido'])) {
-    $consultaSQL = "SELECT * FROM alumnos WHERE apellido LIKE '%" . $_POST['apellido'] . "%'";
+  if (isset($_POST['apellido_paterno'])) {
+    $consultaSQL = "SELECT * FROM alumnos WHERE apellido_paterno LIKE '%" . $_POST['apellido_paterno'] . "%'";
   } else {
     $consultaSQL = "SELECT * FROM alumnos";
   }
@@ -28,7 +28,7 @@ try {
   $error= $error->getMessage();
 }
 
-$titulo = isset($_POST['apellido']) ? 'Lista de alumno (' . $_POST['apellido'] . ')' : 'Lista de alumno';
+$titulo = isset($_POST['apellido:paterno']) ? 'Lista de alumno (' . $_POST['apellido_paterno'] . ')' : 'Lista de alumno';
 ?>
 
 <?php include "templates/header.php"; ?>
@@ -56,7 +56,7 @@ if ($error) {
       <hr>
       <form method="post" class="form-inline">
         <div class="form-group mr-3">
-          <input type="text" id="apellido" name="apellido" placeholder="Buscar por apellido" class="form-control">
+          <input type="text" id="apellido_paterno" name="apellido_paterno" placeholder="Buscar por apellido" class="form-control">
         </div>
         <input name="csrf" type="hidden" value="<?php echo escapar($_SESSION['csrf']); ?>">
         <button type="submit" name="submit" class="btn btn-primary">Ver resultados</button>
