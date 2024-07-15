@@ -24,11 +24,15 @@ if (isset($_POST['submit'])) {
     $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
 
     $alumno = [
-      "id"        => $_GET['id_alumno'],
+      "id"        => $_GET['id'],
       "nombre"    => $_POST['nombre'],
-      "apellido_paterno"  => $_POST['apellido'],
-      "email"     => $_POST['email'],
-      "edad"      => $_POST['edad']
+      "apellido_paterno"  => $_POST['apellido_paterno'],
+      "apellido_materno"  => $_POST['apellido_materno'],
+      "edad"      => $_POST['edad'],
+      "CI"      => $_POST['CI'],
+      "peso"      => $_POST['peso'],
+      "vacunas_al_dia"      => $_POST['vacunas_al_dia'],
+      // se debe traer la informacion del padre, madre y apoderado y curso
     ];
     
     $consultaSQL = "UPDATE alumnos SET
@@ -118,17 +122,31 @@ if (isset($alumno) && $alumno) {
             <input type="text" name="nombre" id="nombre" value="<?= escapar($alumno['nombre']) ?>" class="form-control">
           </div>
           <div class="form-group">
-            <label for="apellido">Apellido</label>
-            <input type="text" name="apellido" id="apellido" value="<?= escapar($alumno['apellido_paterno']) ?>" class="form-control">
+            <label for="apellido_paterno">Apellido Paterno</label>
+            <input type="text" name="apellido_paterno" id="apellido_paterno" value="<?= escapar($alumno['apellido_paterno']) ?>" class="form-control">
           </div>
           <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" value="<?= escapar($alumno['email']) ?>" class="form-control">
+            <label for="apellido_materno">Apellido Materno</label>
+            <input type="text" name="apellido_materno" id="apellido_materno" value="<?= escapar($alumno['apellido_materno']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="edad">Edad</label>
-            <input type="text" name="edad" id="edad" value="<?= escapar($alumno['edad']) ?>" class="form-control">
+            <input type="number" name="edad" id="edad" value="<?= escapar($alumno['edad']) ?>" class="form-control">
           </div>
+          <div class="form-group">
+            <label for="CI">CI</label>
+            <input type="number" name="CI" id="CI" value="<?= escapar($alumno['CI']) ?>" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="peso">Peso</label>
+            <input type="number" name="peso" id="peso" value="<?= escapar($alumno['peso']) ?>" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="vacunas_al_dia">Vacunas al dia</label>
+            <input type="text" name="vacunas_al_dia" id="vacunas_al_dia" value="<?= escapar($alumno['vacunas_al_dia']) ?>" class="form-control">
+          </div>
+
+          
           <div class="form-group">
             <input name="csrf" type="hidden" value="<?php echo escapar($_SESSION['csrf']); ?>">
             <input type="submit" name="submit" class="btn btn-primary" value="Actualizar">
