@@ -26,14 +26,14 @@ if (isset($_POST['submit'])) {
     $alumno = [
       "id"        => $_GET['id_alumno'],
       "nombre"    => $_POST['nombre'],
-      "apellido"  => $_POST['apellido'],
+      "apellido_paterno"  => $_POST['apellido'],
       "email"     => $_POST['email'],
       "edad"      => $_POST['edad']
     ];
     
     $consultaSQL = "UPDATE alumnos SET
         nombre = :nombre,
-        apellido = :apellido,
+        apellido_paterno = :apellido_paterno,
         email = :email,
         edad = :edad,
         updated_at = NOW()
@@ -52,7 +52,7 @@ try {
   $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
     
   $id = $_GET['id'];
-  $consultaSQL = "SELECT * FROM alumnos WHERE id =" . $id;
+  $consultaSQL = "SELECT * FROM alumnos WHERE id_alumno =" . $id;
 
   $sentencia = $conexion->prepare($consultaSQL);
   $sentencia->execute();
@@ -110,7 +110,7 @@ if (isset($alumno) && $alumno) {
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h2 class="mt-4">Editando el alumno <?= escapar($alumno['nombre']) . ' ' . escapar($alumno['apellido'])  ?></h2>
+        <h2 class="mt-4">Editando el alumno <?= escapar($alumno['nombre']) . ' ' . escapar($alumno['apellido_paterno'])  ?></h2>
         <hr>
         <form method="post">
           <div class="form-group">
@@ -119,7 +119,7 @@ if (isset($alumno) && $alumno) {
           </div>
           <div class="form-group">
             <label for="apellido">Apellido</label>
-            <input type="text" name="apellido" id="apellido" value="<?= escapar($alumno['apellido']) ?>" class="form-control">
+            <input type="text" name="apellido" id="apellido" value="<?= escapar($alumno['apellido_paterno']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="email">Email</label>
