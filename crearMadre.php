@@ -91,9 +91,10 @@ if (isset($_POST['submit'])) {
         </div>
         <input name="csrf" type="hidden" value="<?= escapar($_SESSION['csrf']) ?>">
         <div class="form-group">
-          <input type="submit" name="submit" class="btn btn-primary" value="Crear">
-          <a class="btn btn-primary" href="crearApoderado.php">Avanzar</a>
           <a class="btn btn-primary" href="index.php">Regresar al inicio</a>
+          
+          <a class="btn btn-primary" href="crearApoderado.php">Avanzar</a>
+          <input type="submit" name="submit" class="btn btn-primary" value="Crear">
         </div>
       </form>
     </div>

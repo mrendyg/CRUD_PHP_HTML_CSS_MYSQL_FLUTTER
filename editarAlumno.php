@@ -32,9 +32,7 @@ if (isset($_POST['submit'])) {
       "CI"      => $_POST['CI'],
       "peso"      => $_POST['peso'],
       "vacunas_al_dia"      => $_POST['vacunas_al_dia'],
-      "id_padre"      => $_POST['id_padre'],
-      "id_madre"      => $_POST['id_madre'],
-      "id_apoderado"      => $_POST['id_apoderado'],
+
       "id_curso"      => $_POST['id_curso'],
     ];
     
@@ -46,9 +44,7 @@ if (isset($_POST['submit'])) {
         CI = :CI,
         peso = :peso,
         vacunas_al_dia = :vacunas_al_dia,
-        id_padre = :id_padre,
-        id_madre = :id_madre,
-        id_apoderado = :id_apoderado,
+
         id_curso = :id_curso
         WHERE id_alumno = :id";
     $consulta = $conexion->prepare($consultaSQL);
@@ -233,11 +229,7 @@ if (isset($alumno) && $alumno) {
               <option value="si" <?= ($alumno['vacunas_al_dia'] == 'si') ? 'selected' : '' ?>>Sí</option>
               <option value="no" <?= ($alumno['vacunas_al_dia'] == 'no') ? 'selected' : '' ?>>No</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label for="id_padre">ID Padre</label>
-            <input type="number" name="id_padre" id="id_padre" value="<?= escapar($alumno['id_padre']) ?>" class="form-control" disabled>
-          </div>
+          </div>          
           <div class="form-group">
             <label for="nombre_padre">Nombre del Padre</label>
             <input type="text" name="nombre_padre" id="nombre_padre" value="<?= isset($padre) ? escapar($padre['nombres'] . ' ' . $padre['apellido_paterno'] . ' '. $padre['apellido_materno']) : '' ?>" class="form-control" readonly>

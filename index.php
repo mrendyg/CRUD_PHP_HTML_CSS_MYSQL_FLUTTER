@@ -6,59 +6,61 @@ if (isset($_POST['submit']) && !hash_equals($_SESSION['csrf'], $_POST['csrf'])) 
   die();
 }
 
-$error = false;
+$error = '';
 $config = include 'config.php';
 
 try {
   $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
   $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
-
+  $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Activar manejo de errores
+  
+  // Construir la consulta SQL según los parámetros recibidos
   if (isset($_POST['apellido_paterno'])) {
-    $consultaSQL = "SELECT * FROM alumnos WHERE apellido_paterno LIKE '%" . $_POST['apellido_paterno'] . "%'";
+    $consultaSQL = "SELECT a.*, c.grado FROM alumnos a 
+                    LEFT JOIN curso c ON a.id_curso = c.id_curso 
+                    WHERE a.apellido_paterno LIKE :apellido_paterno";
+    $stmt = $conexion->prepare($consultaSQL);
+    $stmt->bindValue(':apellido_paterno', '%' . $_POST['apellido_paterno'] . '%', PDO::PARAM_STR);
   } else {
-    $consultaSQL = "SELECT * FROM alumnos";
+    $consultaSQL = "SELECT a.*, c.grado FROM alumnos a 
+                    LEFT JOIN curso c ON a.id_curso = c.id_curso";
+    $stmt = $conexion->prepare($consultaSQL);
   }
-
-  $sentencia = $conexion->prepare($consultaSQL);
-  $sentencia->execute();
-
-  $alumno = $sentencia->fetchAll();
+  
+  $stmt->execute();
+  $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch(PDOException $error) {
-  $error= $error->getMessage();
+  $error = $error->getMessage();
 }
 
-$titulo = isset($_POST['apellido:paterno']) ? 'Lista de alumno (' . $_POST['apellido_paterno'] . ')' : 'Lista de alumno';
+$titulo = isset($_POST['apellido_paterno']) ? 'Lista de alumnos (Apellido: ' . $_POST['apellido_paterno'] . ')' : 'Lista de alumnos';
 ?>
 
 <?php include "templates/header.php"; ?>
 
-<?php
-if ($error) {
-  ?>
-  <div class="container mt-2">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="alert alert-danger" role="alert">
-          <?= $error ?>
-        </div>
+<?php if ($error): ?>
+<div class="container mt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert alert-danger" role="alert">
+        <?= $error ?>
       </div>
     </div>
   </div>
-  <?php
-}
-?>
+</div>
+<?php endif; ?>
 
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <a href="crearPadre.php"  class="btn btn-primary mt-4">Crear alumno</a>
+      <a href="crearAlumno.php" class="btn btn-primary mt-4">Crear alumno</a>
       <hr>
       <form method="post" class="form-inline">
         <div class="form-group mr-3">
-          <input type="text" id="apellido_paterno" name="apellido_paterno" placeholder="Buscar por apellido" class="form-control">
+          <input type="text" id="apellido_paterno" name="apellido_paterno" placeholder="Buscar por Apellido" class="form-control">
         </div>
-        <input name="csrf" type="hidden" value="<?php echo escapar($_SESSION['csrf']); ?>">
+        <input name="csrf" type="hidden" value="<?= escapar($_SESSION['csrf']); ?>">
         <button type="submit" name="submit" class="btn btn-primary">Ver resultados</button>
       </form>
     </div>
@@ -79,35 +81,30 @@ if ($error) {
             <th>Edad</th>
             <th>CI</th>
             <th>Peso</th>
-            <th>Vacunas al dia</th>
+            <th>Vacunas al día</th>
             <th>Curso</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <?php
-          if ($alumno && $sentencia->rowCount() > 0) {
-            foreach ($alumno as $fila) {
-              ?>
-              <tr>
-                <td><?php echo escapar($fila["id_alumno"]); ?></td>
-                <td><?php echo escapar($fila["nombre"]); ?></td>
-                <td><?php echo escapar($fila["apellido_paterno"]); ?></td>
-                <td><?php echo escapar($fila["apellido_materno"]); ?></td>
-                <td><?php echo escapar($fila["edad"]); ?></td>
-                <td><?php echo escapar($fila["CI"]); ?></td>
-                <td><?php echo escapar($fila["peso"]); ?></td>
-                <td><?php echo escapar($fila["vacunas_al_dia"]); ?></td>
-                <td><?php echo escapar($fila["id_curso"]); ?></td>
-                <td>
-                  <a href="<?= 'borrar.php?id=' . escapar($fila["id_alumno"]) ?>">🗑️Borrar</a>
-                  <a href="<?= 'editarAlumno.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
-                </td>
-              </tr>
-              <?php
-            }
-          }
-          ?>
-        <tbody>
+          <?php foreach ($alumnos as $alumno): ?>
+            <tr>
+              <td><?= escapar($alumno["id_alumno"]); ?></td>
+              <td><?= escapar($alumno["nombre"]); ?></td>
+              <td><?= escapar($alumno["apellido_paterno"]); ?></td>
+              <td><?= escapar($alumno["apellido_materno"]); ?></td>
+              <td><?= escapar($alumno["edad"]); ?></td>
+              <td><?= escapar($alumno["CI"]); ?></td>
+              <td><?= escapar($alumno["peso"]); ?></td>
+              <td><?= escapar($alumno["vacunas_al_dia"]); ?></td>
+              <td><?= escapar($alumno["grado"]); ?></td>
+              <td>
+                <a href="<?= 'borrar.php?id=' . escapar($alumno["id_alumno"]); ?>">🗑️ Borrar</a>
+                <a href="<?= 'editarAlumno.php?id=' . escapar($alumno["id_alumno"]); ?>">✏️ Editar</a>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
       </table>
     </div>
   </div>
