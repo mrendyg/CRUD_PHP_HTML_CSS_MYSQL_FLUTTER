@@ -61,8 +61,8 @@ CREATE TABLE alumnos (
     CI FLOAT,
     peso FLOAT,
     vacunas_al_dia VARCHAR(50),
-    id_padre BIGINT,
-    id_madre BIGINT,
+    id_padre BIGINT NULL,
+    id_madre BIGINT NULL,
     id_apoderado BIGINT,
     id_curso BIGINT,
     CONSTRAINT fk_padre 

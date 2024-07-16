@@ -14,7 +14,21 @@ try {
     
   $id = $_GET['id'];
   $consultaSQL = "DELETE FROM alumnos WHERE id_alumno =" . $id;
+  $sentencia = $conexion->prepare($consultaSQL);
+  $sentencia->execute();
 
+  $id = $_GET['id'];
+  $consultaSQL = "DELETE FROM padre_estudiante WHERE id_padre =" . $id;
+  $sentencia = $conexion->prepare($consultaSQL);
+  $sentencia->execute();
+
+  $id = $_GET['id'];
+  $consultaSQL = "DELETE FROM madre_estudiante WHERE id_madre =" . $id;
+  $sentencia = $conexion->prepare($consultaSQL);
+  $sentencia->execute();
+
+  $id = $_GET['id'];
+  $consultaSQL = "DELETE FROM apoderado_alumno WHERE id_apoderado =" . $id;
   $sentencia = $conexion->prepare($consultaSQL);
   $sentencia->execute();
 

@@ -48,6 +48,26 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
+<?php
+// Conexión a la base de datos y configuración
+$config = include 'config.php';
+try {
+    $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
+    $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
+    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Habilitar excepciones PDO
+
+    // Consulta para obtener los curso
+    $consulta = "SELECT id_curso, grado FROM curso";
+    $stmt = $conexion->query($consulta);
+    $curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch(PDOException $error) {
+    echo 'Error al conectar con la base de datos: ' . $error->getMessage();
+    // Manejar el error adecuadamente en tu aplicación
+    exit;
+}
+?>
+
 <?php include 'templates/header.php'; ?>
 
 <?php if (isset($resultado)): ?>
@@ -94,7 +114,10 @@ if (isset($_POST['submit'])) {
         </div>
         <div class="form-group">
           <label for="vacunas_al_dia">Vacunas al día</label>
-          <input type="text" name="vacunas_al_dia" id="vacunas_al_dia" class="form-control">
+          <select name="vacunas_al_dia" id="vacunas_al_dia" class="form-control">
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="id_padre">ID del Padre</label>
@@ -109,9 +132,16 @@ if (isset($_POST['submit'])) {
           <input type="text" name="id_apoderado" id="id_apoderado" class="form-control">
         </div>
         <div class="form-group">
-          <label for="id_curso">ID del Curso</label>
-          <input type="text" name="id_curso" id="id_curso" class="form-control">
-        </div>
+              <label for="id_curso">Curso</label>
+              <select name="id_curso" id="id_curso" class="form-control">
+                  <option value="">Selecciona un curso</option>
+                  <?php foreach ($curso as $curso): ?>
+                      <option value="<?= escapar($curso['id_curso']) ?>" <?= ($curso['id_curso']) ? 'selected' : '' ?>>
+                          <?= escapar($curso['grado']) ?>
+                      </option>
+                  <?php endforeach; ?>
+              </select>
+          </div>
         <input name="csrf" type="hidden" value="<?= escapar($_SESSION['csrf']) ?>">
         <div class="form-group">
           <input type="submit" name="submit" class="btn btn-primary" value="Enviar">

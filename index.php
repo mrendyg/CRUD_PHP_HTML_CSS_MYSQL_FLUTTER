@@ -52,7 +52,7 @@ if ($error) {
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <a href="crear.php"  class="btn btn-primary mt-4">Crear alumno</a>
+      <a href="crearPadre.php"  class="btn btn-primary mt-4">Crear alumno</a>
       <hr>
       <form method="post" class="form-inline">
         <div class="form-group mr-3">
@@ -80,9 +80,6 @@ if ($error) {
             <th>CI</th>
             <th>Peso</th>
             <th>Vacunas al dia</th>
-            <th>Padre</th>
-            <th>Madre</th>
-            <th>Apoderado</th>
             <th>Curso</th>
           </tr>
         </thead>
@@ -100,13 +97,10 @@ if ($error) {
                 <td><?php echo escapar($fila["CI"]); ?></td>
                 <td><?php echo escapar($fila["peso"]); ?></td>
                 <td><?php echo escapar($fila["vacunas_al_dia"]); ?></td>
-                <td><?php echo escapar($fila["id_padre"]); ?></td>
-                <td><?php echo escapar($fila["id_madre"]); ?></td>
-                <td><?php echo escapar($fila["id_apoderado"]); ?></td>
                 <td><?php echo escapar($fila["id_curso"]); ?></td>
                 <td>
                   <a href="<?= 'borrar.php?id=' . escapar($fila["id_alumno"]) ?>">🗑️Borrar</a>
-                  <a href="<?= 'editar.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
+                  <a href="<?= 'editarAlumno.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
                 </td>
               </tr>
               <?php
