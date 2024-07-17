@@ -233,20 +233,20 @@ if (isset($alumno) && $alumno) {
           <div class="form-group">
             <label for="nombre_padre">Nombre del Padre</label>
             <input type="text" name="nombre_padre" id="nombre_padre" value="<?= isset($padre) ? escapar($padre['nombres'] . ' ' . $padre['apellido_paterno'] . ' '. $padre['apellido_materno']) : '' ?>" class="form-control" readonly>
-            <a href="<?= 'editarPadre.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
+            <a href="<?= 'editarPadre.php?id=' . escapar($padre["id_padre"]) ?>">✏️Editar</a>
 
           </div>
           <div class="form-group">
             <label for="nombre_madre">Nombre de la Madre</label>
             <input type="text" name="nombre_madre" id="nombre_madre" value="<?= isset($madre) ? escapar($madre['nombres'] . ' ' . $madre['apellido_paterno'] . ' '. $madre['apellido_materno']) : '' ?>" class="form-control" readonly>
-            <a href="<?= 'editarMadre.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
+            <a href="<?= 'editarMadre.php?id=' . escapar($madre["id_madre"]) ?>">✏️Editar</a>
           </div>
           <div class="form-group">
             <label for="nombre_apoderado">Nombre Apoderado</label>
-            <input type="text" name="nombre_apoderado" id="nombre_apoderado" value="<?= isset($apoderado) ? escapar($apoderado['nombres'] . ' ' . $apoderado['apellido_paterno'] . ' '. $apoderado['apellido_materno']) : '' ?>" class="form-control" readonly>
-            <a href="<?= 'editarApoderado.php?id=' . escapar($fila["id_alumno"]) ?>">✏️Editar</a>
-
+            <input type="text" name="nombre_apoderado" id="nombre_apoderado" value="<?= isset($apoderado) ? escapar($apoderado['nombres'] . ' ' . $apoderado['apellido_paterno'] . ' ' . $apoderado['apellido_materno']) : '' ?>" class="form-control" readonly>
+            <a href="<?= 'editarApoderado.php?id=' . escapar($apoderado['id_apoderado']) ?>">✏️Editar</a>
           </div>
+
           <div class="form-group">
             <label for="id_curso">Curso</label>
             <select name="id_curso" id="id_curso" class="form-control">

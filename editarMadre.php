@@ -15,7 +15,7 @@ $resultado = [
 
 if (!isset($_GET['id'])) {
   $resultado['error'] = true;
-  $resultado['mensaje'] = 'El padre no existe';
+  $resultado['mensaje'] = 'El madre no existe';
 }
 
 if (isset($_POST['submit'])) {
@@ -23,29 +23,27 @@ if (isset($_POST['submit'])) {
     $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
     $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
 
-    $padre = [
-      "id"        => $_GET['id_padre'],
-      "nombress"    => $_POST['nombress'],
+    $madre = [
+      "id"        => $_GET['id_madre'],
+      "nombres"    => $_POST['nombres'],
       "apellido_paterno"  => $_POST['apellido_paterno'],
       "apellido_materno"  => $_POST['apellido_materno'],
       "edad"      => $_POST['edad'],
-      "CI"      => $_POST['CI'],
-      "peso"      => $_POST['peso'],
-      "vacunas_al_dia"      => $_POST['vacunas_al_dia'],
-      // se debe traer la informacion del padre, madre y apoderado y curso
+      "telefono"      => $_POST['telefono'],
+      // se debe traer la informacion del madre, madre y apoderado y curso
     ];
     
-    $consultaSQL = "UPDATE padre_estudiante SET
+    $consultaSQL = "UPDATE madre_estudiante SET
         dni = :dni,
-        nombres = :nombres,
+        nombress = :nombress,
         apellido_paterno = :apellido_paterno,
         apellido_materno = :apellido_materno,
         edad = :edad,
         telefono = telefono,
         updated_at = NOW()
-        WHERE id_padre = :id";
+        WHERE id_madre = :id";
     $consulta = $conexion->prepare($consultaSQL);
-    $consulta->execute($padre);
+    $consulta->execute($madre);
 
   } catch(PDOException $error) {
     $resultado['error'] = true;
@@ -58,16 +56,16 @@ try {
   $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
     
   $id = $_GET['id'];
-  $consultaSQL = "SELECT * FROM padre_estudiante WHERE id_padre =" . $id;
+  $consultaSQL = "SELECT * FROM madre_estudiante WHERE id_madre =" . $id;
 
   $sentencia = $conexion->prepare($consultaSQL);
   $sentencia->execute();
 
-  $padre = $sentencia->fetch(PDO::FETCH_ASSOC);
+  $madre = $sentencia->fetch(PDO::FETCH_ASSOC);
 
-  if (!$padre) {
+  if (!$madre) {
     $resultado['error'] = true;
-    $resultado['mensaje'] = 'No se ha encontrado el padre';
+    $resultado['mensaje'] = 'No se ha encontrado el madre';
   }
 
 } catch(PDOException $error) {
@@ -101,7 +99,7 @@ if (isset($_POST['submit']) && !$resultado['error']) {
     <div class="row">
       <div class="col-md-12">
         <div class="alert alert-success" role="alert">
-          El padre ha sido actualizado correctamente
+          El madre ha sido actualizado correctamente
         </div>
       </div>
     </div>
@@ -111,37 +109,37 @@ if (isset($_POST['submit']) && !$resultado['error']) {
 ?>
 
 <?php
-if (isset($padre) && $padre) {
+if (isset($madre) && $madre) {
   ?>
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h2 class="mt-4">Editar padre <?= escapar($padre['nombres']) . ' ' . escapar($padre['apellido_paterno'])  ?></h2>
+        <h2 class="mt-4">Editar Madre <?= escapar($madre['nombres']) . ' ' . escapar($madre['apellido_paterno'])  ?></h2>
         <hr>
         <form method="post">
         <div class="form-group">
             <label for="dni">DNI</label>
-            <input type="text" name="dni" id="dni" value="<?= escapar($padre['dni']) ?>" class="form-control">
+            <input type="text" name="dni" id="dni" value="<?= escapar($madre['dni']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="nombres">Nombres</label>
-            <input type="text" name="nombres" id="nombres" value="<?= escapar($padre['nombres']) ?>" class="form-control">
+            <input type="text" name="nombres" id="nombres" value="<?= escapar($madre['nombres']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="apellido_paterno">Apellido Paterno</label>
-            <input type="text" name="apellido_paterno" id="apellido_paterno" value="<?= escapar($padre['apellido_paterno']) ?>" class="form-control">
+            <input type="text" name="apellido_paterno" id="apellido_paterno" value="<?= escapar($madre['apellido_paterno']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="apellido_materno">Apellido Materno</label>
-            <input type="text" name="apellido_materno" id="apellido_materno" value="<?= escapar($padre['apellido_materno']) ?>" class="form-control">
+            <input type="text" name="apellido_materno" id="apellido_materno" value="<?= escapar($madre['apellido_materno']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="edad">Edad</label>
-            <input type="number" name="edad" id="edad" value="<?= escapar($padre['edad']) ?>" class="form-control">
+            <input type="number" name="edad" id="edad" value="<?= escapar($madre['edad']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="telefono">Telefono</label>
-            <input type="number" name="telefono" id="telefono" value="<?= escapar($padre['telefono']) ?>" class="form-control">
+            <input type="number" name="telefono" id="telefono" value="<?= escapar($madre['telefono']) ?>" class="form-control">
           </div>
 
 

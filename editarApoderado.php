@@ -2,6 +2,7 @@
 include 'funciones.php';
 
 csrf();
+
 if (isset($_POST['submit']) && !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
   die();
 }
@@ -15,7 +16,9 @@ $resultado = [
 
 if (!isset($_GET['id'])) {
   $resultado['error'] = true;
-  $resultado['mensaje'] = 'El padre no existe';
+  $resultado['mensaje'] = 'El apoderado no existe';
+} else {
+  $id = $_GET['id'];
 }
 
 if (isset($_POST['submit'])) {
@@ -23,31 +26,30 @@ if (isset($_POST['submit'])) {
     $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
     $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
 
-    $padre = [
-      "id"        => $_GET['id_padre'],
-      "nombress"    => $_POST['nombress'],
+    $apoderado = [
+      "id"                => $id,
+      "dni"               => $_POST['dni'],
+      "nombres"           => $_POST['nombres'],
       "apellido_paterno"  => $_POST['apellido_paterno'],
       "apellido_materno"  => $_POST['apellido_materno'],
-      "edad"      => $_POST['edad'],
-      "CI"      => $_POST['CI'],
-      "peso"      => $_POST['peso'],
-      "vacunas_al_dia"      => $_POST['vacunas_al_dia'],
-      // se debe traer la informacion del padre, madre y apoderado y curso
+      "edad"              => $_POST['edad'],
+      "telefono"          => $_POST['telefono']
     ];
-    
-    $consultaSQL = "UPDATE padre_estudiante SET
+
+    $consultaSQL = "UPDATE apoderado_alumno SET
         dni = :dni,
         nombres = :nombres,
         apellido_paterno = :apellido_paterno,
         apellido_materno = :apellido_materno,
         edad = :edad,
-        telefono = telefono,
+        telefono = :telefono,
         updated_at = NOW()
-        WHERE id_padre = :id";
-    $consulta = $conexion->prepare($consultaSQL);
-    $consulta->execute($padre);
+        WHERE id_apoderado = :id";
 
-  } catch(PDOException $error) {
+    $consulta = $conexion->prepare($consultaSQL);
+    $consulta->execute($apoderado);
+
+  } catch (PDOException $error) {
     $resultado['error'] = true;
     $resultado['mensaje'] = $error->getMessage();
   }
@@ -56,21 +58,20 @@ if (isset($_POST['submit'])) {
 try {
   $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
   $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
-    
-  $id = $_GET['id'];
-  $consultaSQL = "SELECT * FROM padre_estudiante WHERE id_padre =" . $id;
 
+  $consultaSQL = "SELECT * FROM apoderado_alumno WHERE id_apoderado = :id";
   $sentencia = $conexion->prepare($consultaSQL);
+  $sentencia->bindParam(':id', $id, PDO::PARAM_INT);
   $sentencia->execute();
 
-  $padre = $sentencia->fetch(PDO::FETCH_ASSOC);
+  $apoderado = $sentencia->fetch(PDO::FETCH_ASSOC);
 
-  if (!$padre) {
+  if (!$apoderado) {
     $resultado['error'] = true;
-    $resultado['mensaje'] = 'No se ha encontrado el padre';
+    $resultado['mensaje'] = 'No se ha encontrado el apoderado';
   }
 
-} catch(PDOException $error) {
+} catch (PDOException $error) {
   $resultado['error'] = true;
   $resultado['mensaje'] = $error->getMessage();
 }
@@ -78,9 +79,7 @@ try {
 
 <?php require "templates/header.php"; ?>
 
-<?php
-if ($resultado['error']) {
-  ?>
+<?php if ($resultado['error']): ?>
   <div class="container mt-2">
     <div class="row">
       <div class="col-md-12">
@@ -90,64 +89,53 @@ if ($resultado['error']) {
       </div>
     </div>
   </div>
-  <?php
-}
-?>
+<?php endif; ?>
 
-<?php
-if (isset($_POST['submit']) && !$resultado['error']) {
-  ?>
+<?php if (isset($_POST['submit']) && !$resultado['error']): ?>
   <div class="container mt-2">
     <div class="row">
       <div class="col-md-12">
         <div class="alert alert-success" role="alert">
-          El padre ha sido actualizado correctamente
+          El apoderado ha sido actualizado correctamente
         </div>
       </div>
     </div>
   </div>
-  <?php
-}
-?>
+<?php endif; ?>
 
-<?php
-if (isset($padre) && $padre) {
-  ?>
+<?php if (isset($apoderado) && $apoderado): ?>
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h2 class="mt-4">Editar padre <?= escapar($padre['nombres']) . ' ' . escapar($padre['apellido_paterno'])  ?></h2>
+        <h2 class="mt-4">Editar apoderado <?= escapar($apoderado['nombres']) . ' ' . escapar($apoderado['apellido_paterno']) ?></h2>
         <hr>
         <form method="post">
-        <div class="form-group">
+          <div class="form-group">
             <label for="dni">DNI</label>
-            <input type="text" name="dni" id="dni" value="<?= escapar($padre['dni']) ?>" class="form-control">
+            <input type="text" name="dni" id="dni" value="<?= escapar($apoderado['dni']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="nombres">Nombres</label>
-            <input type="text" name="nombres" id="nombres" value="<?= escapar($padre['nombres']) ?>" class="form-control">
+            <input type="text" name="nombres" id="nombres" value="<?= escapar($apoderado['nombres']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="apellido_paterno">Apellido Paterno</label>
-            <input type="text" name="apellido_paterno" id="apellido_paterno" value="<?= escapar($padre['apellido_paterno']) ?>" class="form-control">
+            <input type="text" name="apellido_paterno" id="apellido_paterno" value="<?= escapar($apoderado['apellido_paterno']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="apellido_materno">Apellido Materno</label>
-            <input type="text" name="apellido_materno" id="apellido_materno" value="<?= escapar($padre['apellido_materno']) ?>" class="form-control">
+            <input type="text" name="apellido_materno" id="apellido_materno" value="<?= escapar($apoderado['apellido_materno']) ?>" class="form-control">
           </div>
           <div class="form-group">
             <label for="edad">Edad</label>
-            <input type="number" name="edad" id="edad" value="<?= escapar($padre['edad']) ?>" class="form-control">
+            <input type="number" name="edad" id="edad" value="<?= escapar($apoderado['edad']) ?>" class="form-control">
           </div>
           <div class="form-group">
-            <label for="telefono">Telefono</label>
-            <input type="number" name="telefono" id="telefono" value="<?= escapar($padre['telefono']) ?>" class="form-control">
+            <label for="telefono">Teléfono</label>
+            <input type="number" name="telefono" id="telefono" value="<?= escapar($apoderado['telefono']) ?>" class="form-control">
           </div>
-
-
-          
           <div class="form-group">
-            <input name="csrf" type="hidden" value="<?php echo escapar($_SESSION['csrf']); ?>">
+            <input name="csrf" type="hidden" value="<?= escapar($_SESSION['csrf']); ?>">
             <input type="submit" name="submit" class="btn btn-primary" value="Actualizar">
             <a class="btn btn-primary" href="index.php">Regresar al inicio</a>
           </div>
@@ -155,8 +143,6 @@ if (isset($padre) && $padre) {
       </div>
     </div>
   </div>
-  <?php
-}
-?>
+<?php endif; ?>
 
 <?php require "templates/footer.php"; ?>

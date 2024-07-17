@@ -93,7 +93,7 @@ if (isset($_POST['submit'])) {
         <div class="form-group">
           <a class="btn btn-primary" href="index.php">Regresar al inicio</a>
           
-          <a class="btn btn-primary" href="crearApoderado.php">Avanzar</a>
+          <a class="btn btn-primary" href="crearAlumno.php">Avanzar</a>
           <input type="submit" name="submit" class="btn btn-primary" value="Crear">
         </div>
       </form>
