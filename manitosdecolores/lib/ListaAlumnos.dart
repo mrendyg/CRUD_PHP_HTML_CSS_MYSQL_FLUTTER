@@ -9,12 +9,13 @@ class ListaAlumnos extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Material App',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Lista'),
         ),
         body: const Center(
-          child: Text('Hello World'),
+          child: Text('Aqui va mi lista de alumnos'),
         ),
       ),
     );
