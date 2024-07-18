@@ -1,0 +1,38 @@
+# Ignore the entire flutter folder
+flutter/
+
+# Ignore build outputs
+/build/
+
+# Ignore Dart tool and package files
+.dart_tool/
+.packages
+.pub/
+
+# Ignore IDE-specific files
+.idea/
+*.iml
+
+# Ignore iOS specific files and folders
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/FlutterPluginRegistrant/Info.plist
+ios/Pods/
+ios/.symlinks/
+ios/Podfile.lock
+
+# Ignore Android specific files and folders
+android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/captures/
+
+# Ignore generated files
+*.log
+*.tmp
+
+# Ignore web specific files and folders
+web/.dart_tool/
+web/.packages
+web/build/
