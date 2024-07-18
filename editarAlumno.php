@@ -44,7 +44,6 @@ if (isset($_POST['submit'])) {
         CI = :CI,
         peso = :peso,
         vacunas_al_dia = :vacunas_al_dia,
-
         id_curso = :id_curso
         WHERE id_alumno = :id";
     $consulta = $conexion->prepare($consultaSQL);

@@ -1,8 +1,29 @@
 <?php
-
 include 'funciones.php';
 
 csrf(); // Función para generar y verificar el token CSRF
+
+$config = include 'config.php';
+try {
+    $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
+    $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
+    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Habilitar excepciones PDO
+
+    // Obtener los últimos IDs creados y sus nombres y apellidos
+    $ultimoPadre = $conexion->query("SELECT * FROM padre_estudiante ORDER BY id_padre DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $ultimoMadre = $conexion->query("SELECT * FROM madre_estudiante ORDER BY id_madre DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $ultimoApoderado = $conexion->query("SELECT * FROM apoderado_alumno ORDER BY id_apoderado DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+
+    // Consulta para obtener los cursos
+    $consulta = "SELECT id_curso, grado FROM curso";
+    $stmt = $conexion->query($consulta);
+    $curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch(PDOException $error) {
+    echo 'Error al conectar con la base de datos: ' . $error->getMessage();
+    // Manejar el error adecuadamente en tu aplicación
+    exit;
+}
 
 if (isset($_POST['submit']) && !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
   die("Token CSRF no válido");
@@ -14,13 +35,7 @@ if (isset($_POST['submit'])) {
     'mensaje' => 'El alumno ' . escapar($_POST['nombre']) . ' ha sido agregado con éxito'
   ];
 
-  $config = include 'config.php';
-
   try {
-    $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
-    $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Habilitar excepciones PDO
-
     $alumno = [
       "nombre"   => $_POST['nombre'],
       "apellido_paterno" => $_POST['apellido_paterno'],
@@ -29,9 +44,9 @@ if (isset($_POST['submit'])) {
       "ci"       => $_POST['ci'],
       "peso"     => $_POST['peso'],
       "vacunas_al_dia" => $_POST['vacunas_al_dia'],
-      "id_padre" => $_POST['id_padre'],
-      "id_madre" => $_POST['id_madre'],
-      "id_apoderado" => $_POST['id_apoderado'],
+      "id_padre" => $ultimoPadre['id_padre'],
+      "id_madre" => $ultimoMadre['id_madre'],
+      "id_apoderado" => $ultimoApoderado['id_apoderado'],
       "id_curso" => $_POST['id_curso'],
     ];
 
@@ -45,26 +60,6 @@ if (isset($_POST['submit'])) {
     $resultado['error'] = true;
     $resultado['mensaje'] = 'Error al agregar alumno: ' . $error->getMessage();
   }
-}
-?>
-
-<?php
-// Conexión a la base de datos y configuración
-$config = include 'config.php';
-try {
-    $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
-    $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Habilitar excepciones PDO
-
-    // Consulta para obtener los curso
-    $consulta = "SELECT id_curso, grado FROM curso";
-    $stmt = $conexion->query($consulta);
-    $curso = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-} catch(PDOException $error) {
-    echo 'Error al conectar con la base de datos: ' . $error->getMessage();
-    // Manejar el error adecuadamente en tu aplicación
-    exit;
 }
 ?>
 
@@ -119,29 +114,32 @@ try {
             <option value="no">No</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label for="id_padre">ID del Padre</label>
-          <input type="text" name="id_padre" id="id_padre" class="form-control">
+          <label for="nombre_completo_padre">Nombre Completo del Padre</label>
+          <input type="text" name="nombre_completo_padre" id="nombre_completo_padre" class="form-control" readonly value="<?= escapar($ultimoPadre['nombres']) . ' ' . escapar($ultimoPadre['apellido_paterno']) . ' ' . escapar($ultimoPadre['apellido_materno']) ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="nombre_completo_madre">Nombre Completo de la Madre</label>
+          <input type="text" name="nombre_completo_madre" id="nombre_completo_madre" class="form-control" readonly value="<?= escapar($ultimoMadre['nombres']) . ' ' . escapar($ultimoMadre['apellido_paterno']) . ' ' . escapar($ultimoMadre['apellido_materno']) ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="nombre_completo_apoderado">Nombre Completo del Apoderado</label>
+          <input type="text" name="nombre_completo_apoderado" id="nombre_completo_apoderado" class="form-control" readonly value="<?= escapar($ultimoApoderado['nombres']) . ' ' . escapar($ultimoApoderado['apellido_paterno']) . ' ' . escapar($ultimoApoderado['apellido_materno']) ?>">
         </div>
         <div class="form-group">
-          <label for="id_madre">ID de la Madre</label>
-          <input type="text" name="id_madre" id="id_madre" class="form-control">
+          <label for="id_curso">Curso</label>
+          <select name="id_curso" id="id_curso" class="form-control">
+              <option value="">Selecciona un curso</option>
+              <?php foreach ($curso as $c): ?>
+                  <option value="<?= escapar($c['id_curso']) ?>" <?= ($c['id_curso']) ? 'selected' : '' ?>>
+                      <?= escapar($c['grado']) ?>
+                  </option>
+              <?php endforeach; ?>
+          </select>
         </div>
-        <div class="form-group">
-          <label for="id_apoderado">ID del Apoderado</label>
-          <input type="text" name="id_apoderado" id="id_apoderado" class="form-control">
-        </div>
-        <div class="form-group">
-              <label for="id_curso">Curso</label>
-              <select name="id_curso" id="id_curso" class="form-control">
-                  <option value="">Selecciona un curso</option>
-                  <?php foreach ($curso as $curso): ?>
-                      <option value="<?= escapar($curso['id_curso']) ?>" <?= ($curso['id_curso']) ? 'selected' : '' ?>>
-                          <?= escapar($curso['grado']) ?>
-                      </option>
-                  <?php endforeach; ?>
-              </select>
-          </div>
         <input name="csrf" type="hidden" value="<?= escapar($_SESSION['csrf']) ?>">
         <div class="form-group">
           <input type="submit" name="submit" class="btn btn-primary" value="Enviar">

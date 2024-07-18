@@ -24,15 +24,13 @@ if (isset($_POST['submit'])) {
     $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
 
     $padre = [
-      "id"        => $_GET['id_padre'],
-      "nombress"    => $_POST['nombress'],
+      "id"        => $_GET['id'],
+      "dni"    => $_POST['dni'],
+      "nombres"    => $_POST['nombres'],
       "apellido_paterno"  => $_POST['apellido_paterno'],
       "apellido_materno"  => $_POST['apellido_materno'],
       "edad"      => $_POST['edad'],
-      "CI"      => $_POST['CI'],
-      "peso"      => $_POST['peso'],
-      "vacunas_al_dia"      => $_POST['vacunas_al_dia'],
-      // se debe traer la informacion del padre, madre y apoderado y curso
+      "telefono"      => $_POST['telefono'],
     ];
     
     $consultaSQL = "UPDATE padre_estudiante SET
@@ -41,8 +39,7 @@ if (isset($_POST['submit'])) {
         apellido_paterno = :apellido_paterno,
         apellido_materno = :apellido_materno,
         edad = :edad,
-        telefono = telefono,
-        updated_at = NOW()
+        telefono = :telefono
         WHERE id_padre = :id";
     $consulta = $conexion->prepare($consultaSQL);
     $consulta->execute($padre);
@@ -119,7 +116,11 @@ if (isset($padre) && $padre) {
         <h2 class="mt-4">Editar padre <?= escapar($padre['nombres']) . ' ' . escapar($padre['apellido_paterno'])  ?></h2>
         <hr>
         <form method="post">
-        <div class="form-group">
+          <div class="form-group">
+              <label for="id_padre">ID</label>
+              <input type="text" name="id_padre" id="id_padre" value="<?= escapar($padre['id_padre']) ?>" class="form-control" disabled>
+            </div>
+          <div class="form-group">
             <label for="dni">DNI</label>
             <input type="text" name="dni" id="dni" value="<?= escapar($padre['dni']) ?>" class="form-control">
           </div>
