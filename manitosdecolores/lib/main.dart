@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'ListaAlumnos.dart';
+import 'package:manitosdecolores/loginPage.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -11,65 +12,71 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(193, 61, 9, 152)),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Jardin'),
       debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-
-  @override
-  Widget build(BuildContext context) {
-   
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Jardin Manitos de colores',
-            ),
-            const SizedBox(height: 16), // Separación entre el texto y el botón
-            
-            FloatingActionButton(
-              onPressed: () {
-                 Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ListaAlumnos()),
-          );
-                // Aquí va la función que se ejecutará cuando se presione el botón
-              },
-              tooltip: 'Entrar',
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [// Icono predeterminado
-                   // Separación entre el icono y el texto
-                  Text('Entrar'), // Texto personalizado
-                ],
+      title: 'Inicio',
+      home: Navigator( // Wrap your MaterialApp with Navigator
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'MANITOS DE COLORES',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 0, 60, 255),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Jardin infantil',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(255, 0, 204, 255),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Image.asset('assets/img/manitos.png', fit: BoxFit.fill),
+                    ),
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                              Navigator.push(context,  MaterialPageRoute(builder: (context) => const LoginPage()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromARGB(255, 0, 166, 211),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 20),
+                            minimumSize: const Size(double.infinity, 50),
+                          ),
+                          child: const Text(
+                            'Iniciar sesión',
+                            textAlign: TextAlign.justify,
+                            ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
