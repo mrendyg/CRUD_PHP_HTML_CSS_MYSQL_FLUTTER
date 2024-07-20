@@ -10,7 +10,7 @@ try {
         $config['db']['options']
     );
 
-    $stmt = $pdo->query('SELECT nombre, apellido_paterno, apellido_materno FROM alumnos');
+    $stmt = $pdo->query('SELECT id_alumno, nombre, apellido_paterno, apellido_materno FROM alumnos');
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($rows);

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:manitosdecolores/createAlumno.dart';
 import 'dart:convert';
 import 'loginPage.dart';
-
+import 'editAlumno.dart';
 
 class ListaAlumnos extends StatelessWidget {
   const ListaAlumnos({super.key});
 
   Future<List<Map<String, dynamic>>> fetchAlumnos() async {
     final response = await http.get(Uri.parse('http://10.0.2.2/manitosdecolores/APIapp/getAlumnos.php'));
-
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -23,10 +23,33 @@ class ListaAlumnos extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Manitos de colores',
+      title: 'Manitos de Colores',
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Lista de Alumnos'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage())
+                );
+              },
+              color: Colors.red,
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateAlumno())
+                );
+              },
+              color: const Color.fromARGB(255, 92, 92, 92),
+            ),
+            
+          ],
         ),
         body: FutureBuilder<List<Map<String, dynamic>>>(
           future: fetchAlumnos(),
@@ -49,9 +72,10 @@ class ListaAlumnos extends StatelessWidget {
                       children: [
                         ElevatedButton(
                           onPressed: () {
+                            int idAlumno = alumno['id_alumno'];
                             Navigator.push(
-                              context, 
-                              MaterialPageRoute(builder: (context) => const LoginPage())
+                              context,
+                              MaterialPageRoute(builder: (context) => EditAlumno(id: idAlumno)),
                             );
                           },
                           style: const ButtonStyle(
@@ -61,7 +85,6 @@ class ListaAlumnos extends StatelessWidget {
                           child: const Text('Ver'),
                         ),
                         const SizedBox(width: 8),
-                        
                       ],
                     ),
                   );
