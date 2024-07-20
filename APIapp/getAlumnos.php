@@ -1,5 +1,4 @@
 <?php
-// get_students.php
 header('Content-Type: application/json');
 $config = require 'db_config.php';
 
@@ -11,7 +10,7 @@ try {
         $config['db']['options']
     );
 
-    $stmt = $pdo->query('SELECT * FROM alumnos');
+    $stmt = $pdo->query('SELECT nombre, apellido_paterno, apellido_materno FROM alumnos');
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($rows);
@@ -19,3 +18,4 @@ try {
     echo json_encode(['error' => $e->getMessage()]);
 }
 ?>
+

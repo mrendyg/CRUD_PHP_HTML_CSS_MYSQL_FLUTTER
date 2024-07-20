@@ -1,78 +1,76 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'loginPage.dart';
 
-
-import 'package:flutter/material.dart';
-import 'package:manitosdecolores/loginPage.dart';
-
-void main() => runApp(const ListaAlumnos());
 
 class ListaAlumnos extends StatelessWidget {
   const ListaAlumnos({super.key});
+
+  Future<List<Map<String, dynamic>>> fetchAlumnos() async {
+    final response = await http.get(Uri.parse('http://10.0.2.2/manitosdecolores/APIapp/getAlumnos.php'));
+
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al cargar datos de Alumnos');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Material App',
+      title: 'Manitos de colores',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Lista'),
+          title: const Text('Lista de Alumnos'),
         ),
-       
-        body:  SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Alumno 1"),
-                ],
-              ),
-              Column(
-                
-                children: [
-                  ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (context) => const LoginPage())
-                    );
-                  },
-                  style: ButtonStyle(
-                    alignment: Alignment.center,
-                    backgroundColor: const WidgetStatePropertyAll(Color(0xFF00B8D4)),
-                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+        body: FutureBuilder<List<Map<String, dynamic>>>(
+          future: fetchAlumnos(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No hay datos disponibles'));
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var alumno = snapshot.data![index];
+                  return ListTile(
+                    title: Text('${alumno['nombre']} ${alumno['apellido_paterno']} ${alumno['apellido_materno']}'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(builder: (context) => const LoginPage())
+                            );
+                          },
+                          style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(Color(0xFF00B8D4)),
+                            foregroundColor: WidgetStatePropertyAll(Colors.white),
+                          ),
+                          child: const Text('Ver'),
+                        ),
+                        const SizedBox(width: 8),
+                        
+                      ],
                     ),
-                  child: const Text("Editar")),
-                ]
-                
-              ),
-              Column(
-                children: [
-                ElevatedButton(
-                  onPressed: (){
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (context) => const LoginPage())
-                    );
-                  }, 
-                  style: const ButtonStyle(
-                    alignment: Alignment.center,
-                    backgroundColor: WidgetStatePropertyAll(Colors.red),
-                    foregroundColor: WidgetStatePropertyAll(Colors.white)
-                  ),
-                  child: const Text("Borrar"))]
-                
-              )
-            ],
-          ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
-    )
     );
   }
 }
